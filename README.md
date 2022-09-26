@@ -36,7 +36,7 @@ Invoke the action step providing the required parameters to analyze user activit
 ```
 name: Analyze User Activity
 id: analyze_user_activity
-uses: ramesh2051/inactive-users-action@v1
+uses: ramesh2051/inactive-users-action@main
 with:
   token: ${{ secrets.ORGANIZATION_AND_REPO_ACCESS_TOKEN }}
   organization: octodemo
@@ -47,7 +47,7 @@ Get user activity in the last 90 days for an organization and save the output CS
 ```
 - name: Analyze User Activity
   id: analyze_user_activity
-  uses: ramesh2051/inactive-users-action@v1
+  uses: ramesh2051/inactive-users-action@main
   with:
     token: ${{ secrets.ORGANIZATION_AND_REPO_ACCESS_TOKEN }}
     organization: octodemo

@@ -25,7 +25,7 @@ module.exports = class UserActivity {
     }
 
     get isActive() {
-        return (this.commits + this.pullRequestComments + this.issueComments + this.issues) > 0;
+        return (this.commits + this.pullRequestComments + this.issueComments + this.issues + this.pullRequest) > 0;
     }
 
     increment(attribute, repo, amount) {
@@ -58,7 +58,7 @@ module.exports = class UserActivity {
     get pullRequest() {
         return this._getTotal(UserActivityAttributes.PULL_REQUEST);
     }
-    
+
     get jsonPayload() {
         const self = this,
             result = {

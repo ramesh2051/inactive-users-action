@@ -9521,7 +9521,7 @@ module.exports = class UserActivity {
     }
 
     get isActive() {
-        return (this.commits + this.pullRequestComments + this.issueComments + this.issues) > 0;
+        return (this.commits + this.pullRequestComments + this.issueComments + this.issues + this.pullRequest) > 0;
     }
 
     increment(attribute, repo, amount) {
@@ -9549,6 +9549,10 @@ module.exports = class UserActivity {
 
     get issueComments() {
         return this._getTotal(UserActivityAttributes.ISSUE_COMMENTS);
+    }
+    
+    get pullRequest() {
+        return this._getTotal(UserActivityAttributes.PULL_REQUEST);
     }
 
     get jsonPayload() {
@@ -9592,6 +9596,7 @@ module.exports = {
   ISSUES: 'issues',
   ISSUE_COMMENTS: 'issueComments',
   PULL_REQUEST_COMMENTS: 'prComments',
+  PULL_REQUEST: 'pullRequest',
 }
 
 /***/ }),
@@ -9965,6 +9970,9 @@ module.exports = class RepositoryActivity {
     const prComments = await prActivity.getPullRequestCommentActivityFrom(owner, name, since)
     data[UserActivityAttributes.PULL_REQUEST_COMMENTS] = prComments[fullName];
 
+    const pullRequest = await prActivity.getPullRequestActivityFrom(owner, name, since);
+    data[UserActivityAttributes.PULL_REQUESTS] = pullRequest[fullName];
+
     const results = {};
     results[fullName] = data;
 
@@ -9988,6 +9996,10 @@ module.exports = class RepositoryActivity {
     //   })
     //   .then(prComments => {
     //     data[UserActivityAttributes.PULL_REQUEST_COMMENTS]= prComments[fullName];
+    //   })
+    //   .then(pullRequest => {
+    //     data[UserActivityAttributes.PULL_REQUESTS] = pullRequest[fullName];
+    //     return prActivity.getPullRequestActivityFrom(owner, name, since);
     //
     //     const results = {}
     //     results[fullName] = data;

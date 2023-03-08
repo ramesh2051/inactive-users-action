@@ -4,5 +4,5 @@ module.exports = {
   ISSUES: 'issues',
   ISSUE_COMMENTS: 'issueComments',
   PULL_REQUEST_COMMENTS: 'prComments',
-  PULL_REQUEST: 'pullRequest'
+  PULL_REQUEST: 'pullRequest',
 }

@@ -55,6 +55,10 @@ module.exports = class UserActivity {
         return this._getTotal(UserActivityAttributes.ISSUE_COMMENTS);
     }
 
+    get pullRequest() {
+        return this._getTotal(UserActivityAttributes.PULL_REQUEST);
+    }
+    
     get jsonPayload() {
         const self = this,
             result = {

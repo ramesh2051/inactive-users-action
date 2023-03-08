@@ -56,7 +56,7 @@ module.exports = class UserActivity {
     }
 
     get pullRequest() {
-        return this._getTotal(UserActivityAttributes.PULL_REQUEST);
+        return this._getTotal(UserActivityAttributes.PULL_REQUESTS);
     }
 
     get jsonPayload() {

@@ -9521,7 +9521,7 @@ module.exports = class UserActivity {
     }
 
     get isActive() {
-        return (this.commits + this.pullRequestComments + this.issueComments + this.issues) > 0;
+        return (this.commits + this.pullRequestComments + this.issueComments + this.issues + this.pullRequest) > 0;
     }
 
     increment(attribute, repo, amount) {
@@ -9549,6 +9549,10 @@ module.exports = class UserActivity {
 
     get issueComments() {
         return this._getTotal(UserActivityAttributes.ISSUE_COMMENTS);
+    }
+    
+    get pullRequest() {
+        return this._getTotal(UserActivityAttributes.PULL_REQUESTS);
     }
 
     get jsonPayload() {
@@ -9592,6 +9596,7 @@ module.exports = {
   ISSUES: 'issues',
   ISSUE_COMMENTS: 'issueComments',
   PULL_REQUEST_COMMENTS: 'prComments',
+  PULL_REQUESTS: 'pullRequests',
 }
 
 /***/ }),
@@ -9870,6 +9875,46 @@ module.exports = class PullRequestActivity {
     this._octokit = octokit;
   }
 
+  getPullRequestActivityFrom(owner, repo, since) {
+    const from = util.getFromDate(since)
+      , repoFullName = `${owner}/${repo}`
+    ;
+
+    return this.octokit.paginate('GET /repos/:owner/:repo/pulls',
+      {
+        owner: owner,
+        repo: repo,
+        since: from,
+        per_page: 100,
+      }
+    ).then(pullRequests => {
+      const users = {};
+
+      pullRequests.forEach(pullRequest => {
+        if (pullRequest.user && pullRequest.user.login) {
+          const login = pullRequest.user.login;
+
+          if (!users[login]) {
+            users[login] = 1;
+          } else {
+            users[login] = users[login] + 1;
+          }
+        }
+      });
+
+      const data = {}
+      data[repoFullName] = users;
+      return data;
+    }).catch(err => {
+      if (err.status === 404) {
+        return {};
+      } else {
+        console.error(err)
+        throw err;
+      }
+    });
+  }
+
   getPullRequestCommentActivityFrom(owner, repo, since) {
     const from = util.getFromDate(since)
       , repoFullName = `${owner}/${repo}`
@@ -9965,6 +10010,9 @@ module.exports = class RepositoryActivity {
     const prComments = await prActivity.getPullRequestCommentActivityFrom(owner, name, since)
     data[UserActivityAttributes.PULL_REQUEST_COMMENTS] = prComments[fullName];
 
+    const pullRequest = await prActivity.getPullRequestActivityFrom(owner, name, since);
+    data[UserActivityAttributes.PULL_REQUESTS] = pullRequest[fullName];
+
     const results = {};
     results[fullName] = data;
 
@@ -9988,6 +10036,10 @@ module.exports = class RepositoryActivity {
     //   })
     //   .then(prComments => {
     //     data[UserActivityAttributes.PULL_REQUEST_COMMENTS]= prComments[fullName];
+    //   })
+    //   .then(pullRequest => {
+    //     data[UserActivityAttributes.PULL_REQUESTS] = pullRequest[fullName];
+    //     return prActivity.getPullRequestActivityFrom(owner, name, since);
     //
     //     const results = {}
     //     results[fullName] = data;

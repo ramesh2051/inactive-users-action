@@ -9511,6 +9511,10 @@ module.exports = class UserActivity {
     get login() {
         return this._login;
     }
+    
+    get repo()  {
+        return this._email
+    }
 
     get email() {
         return this._email || '';
@@ -9559,6 +9563,7 @@ module.exports = class UserActivity {
         const self = this,
             result = {
                 login: this.login,
+                repo: this.repo,
                 email: this.email,
                 isActive: this.isActive
             };
